@@ -57,7 +57,7 @@ Status isEmpty(const SqList L)
 	}
 }
 
-Status getLength(const SqList L)
+int GetLength(const SqList L)
 {
 	return L.length;
 }
@@ -234,7 +234,7 @@ int main()
 		{
 			InsertElem(&L, i+1, i);
 		}
-		printf("length is %d\n", getLength(L));
+		printf("length is %d\n", GetLength(L));
 		
 		if (GetElem(L, 1, &e))
 		{

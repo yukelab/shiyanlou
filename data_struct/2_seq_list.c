@@ -58,7 +58,7 @@ Status isEmpty(const Linklist L)
 	}
 }
 
-Status getLength(const Linklist L)
+int GetLength(const Linklist L)
 {
 	int i = 0;
 	Linklist p = L->next;
@@ -247,7 +247,7 @@ int main()
 		printf("element is not exists\n");
 	}
 
-	printf("length is %d/n",getLength(L));
+	printf("length is %d/n",GetLength(L));
 
 	printf("The element 5 at location %d\n", FindElem(L, 5, *compare));
 	

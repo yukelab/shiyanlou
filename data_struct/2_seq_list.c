@@ -5,70 +5,87 @@
 #define FALSE 0
 #define OK 1
 #define ERROR 0
-#define INIT_SIZE 10
-#define INCREMENT_SIZE 5
+#define OVERFLOW	 -2
 
 typedef int Status;
 typedef int Elemtype;
 
-typedef struct
+typedef struct LNode
 {
 	Elemtype *elem;
-	int length;
-	int size;
-}SqList;
+	struct LNode *next;
+}LNode, *Linklist;
 
 
-Status InitList(SqList *L)
+Status InitList(Linklist *L)
 {
-	L->elem = (Elemtype *) malloc(INIT_SIZE * sizeof(Elemtype));
+	*L = (Linklist) malloc(sizeof(LNode));
 	if (!L->elem)
 	{
-		return ERROR;
+		exit(OVERFLOW);
 	}
-	L->length = 0;
-	L->size = INIT_SIZE;
+	(*L)->next = NULL;
 	return OK;
 }
 
-Status DestoryList(SqList *L)
+void DestoryList(Linklist *L)
 {
-	free(L->elem);
-	L->length = 0;
-	L->size = 0;
-	return OK;
-}
-
-Status ClearList(SqList *L)
-{
-	L->length = 0;
-	return OK;
-}
-
-Status isEmpty(const SqList L)
-{
-	if (0 == L.length)
+	Linklist temp;
+	while (*L)
 	{
-		return TRUE;
+		temp = (*L)->next;
+		free(L);
+		*L = temp;
 	}
-	else
+}
+
+void ClearList(Linklist *L)
+{
+	Linklist p = L->next;
+	L->next = NULL;
+	DestoryList(&p);
+}
+
+Status isEmpty(const Linklist L)
+{
+	if (L.next)
 	{
 		return FALSE;
 	}
+	else
+	{
+		return TRUE;
+	}
 }
 
-Status getLength(const SqList L)
+Status getLength(const Linklist L)
 {
-	return L.length;
+	int i = 0;
+	Linklist p = L->next;
+	
+	while(p)
+	{
+		i++;
+		p = p->next;
+	}
+	return i;
 }
 
-Status GetElem(const SqList L, int i, Elemtype *e)
+Status GetElem(const Linklist L, int i, Elemtype *e)
 {
-	if (i < 1 || i > L.length)
+	int j = 1;
+	Linklist p = L->next;
+	while (p && j < i)
+	{
+		j++;
+		p = p->next;
+	}
+
+	if (!p || j > i)
 	{
 		return ERROR;
 	}
-	*e = L.elem[i - 1];
+	*e = p->data;
 	return OK;
 }
 
@@ -88,121 +105,98 @@ Status compare(Elemtype e1, Elemtype e2)
 	}
 }
 
-Status FindElem(const SqList L, Elemtype e, Status (*compare)(Elemtype,Elemtype))
+Status FindElem(Linklist L, Elemtype e, Status (*compare)(Elemtype,Elemtype))
 {
-	int i;
-	for (i = 0; i < L.length; i++)
+	int i = 0;
+	Linklist p = L->next;
+	while (p)
 	{
-		if(!(*compare)(L.elem[i], e))
+		i++;
+		if(!(*compare)(p->data,e))
 		{
-			return i + 1;
+			return i;
 		}
+		p = p->next;
 	}
-	
-	if (i >= L.length)
+	return 0;
+}
+		
+
+Status PreElem(const Linklist L, Elemtype cur_e, Elemtype *pre_e)
+{
+	Linklist q, p = L->next;
+	while (p->next)
 	{
-		return ERROR;
+		q = p->next;
+		if (q->data == cur_e) 
+		{
+			*pre_e = p->data;
+			return OK;
+		}
+		p = q;
 	}
+	return ERROR;
+}	
+	
+
+
+Status NextElem(const Linklist L, Elemtype cur_e, Elemtype *next_e)
+{
+	Linklist p = L->next;
+	while (p->next)
+	{
+		if (q->data == cur_e) 
+		{
+			*next_e = p->next->data;
+			return OK;
+		}
+		p = p->next;
+	}
+	return ERROR;
 }
 
-
-Status PreElem(const SqList L, Elemtype cur_e, Elemtype *pre_e)
+Status InsertElem(Linklist *L, int i, Elemtype e)
 {
-	int i;
-	for (i =0; i< L.length; i++)
+	int j = 0;
+	Linklist s, p = L;
+	while (p || j < i -1)
 	{
-		if (cur_e == L.elem[i])
-		{
-			if (i != 0)
-			{
-				*pre_e = L.elem[i - 1];
-				return OK;
-			}
-			else
-			{
-				return ERROR;
-			}
-		}
+		j++;
+		p = p->next;
 	}
 	
-	if (i >= L.length)
-	{
-		return ERROR;
-	}
-}
-
-
-
-Status NextElem(const SqList L, Elemtype cur_e, Elemtype *next_e)
-{
-	int i;
-	for (i =0; i< L.length; i++)
-	{
-		if (cur_e == L.elem[i])
-		{
-			if (i < L.length - 1)
-			{
-				*next_e = L.elem[i + 1];
-				return OK;
-			}
-			else
-			{
-				return ERROR;
-			}
-		}
-	}
-	
-	if (i >= L.length)
-	{
-		return ERROR;
-	}
-}
-
-Status InsertElem(SqList *L, int i, Elemtype e)
-{
-	Elemtype *new;
-	if(i < 1 || i > L->length + 1)
+	if (!p || j < i -1)
 	{
 		return ERROR;
 	}
 	
-	if (L->length >= L->size)
-	{
-		new = (Elemtype*) realloc(L->elem, (L->size + INCREMENT_SIZE) * sizeof(Elemtype));
-		if (!new)
-		{
-			return ERROR;
-		}
-		L->elem = new;
-		L->size += INCREMENT_SIZE;
-	}
-	
-	Elemtype *p = &L->elem[i - 1];
-	Elemtype *q = &L->elem[L->length - 1];
-	for(;q >= p; q--)
-	{
-		*(q + 1) = *(q);
-	}
-	*p = e;
-	++L->length;
+	s = (Linklist) malloc(sizeof(LNode));
+	s->data = e;
+	s->next = p->next;
+	p->next = s;
 	return OK;
 }
 
 
-Status DeleteElem(SqList *L, int i, Elemtype *e)
+Status DeleteElem(Linklist *L, int i, Elemtype *e)
 {
-	if (i < 1 || i > L->length)
+	int j = 0;
+	Linklist q, p = L;
+	while (p || j < i -1)
+	{
+		j++;
+		p = p->next;
+	}
+	
+	if (!p || j < i -1)
 	{
 		return ERROR;
 	}
-	Elemtype *p = &L->elem[i-1];
-
-	*e = *p;
-	for(; p < &L->elem[L->length]; p++)
-	{
-		*p = *(p + 1);
-	}
-	--L->length;
+	
+	q = p->next;
+	p->next = q->next;
+	*e = q->data;
+	free(q);
 	return OK;
 }
 
@@ -211,68 +205,68 @@ void visit(Elemtype e)
 	printf("%d ", e);
 }
 
-Status TraverseList(const SqList L, void (*visit)(Elemtype))
+void TraverseList(const Linklist L, void (*visit)(Elemtype))
 {
-	int i;
-	for (i = 0; i < L.length; i++)
+	Linklist p = L->next;
+	while(p)
 	{
 		visit(L.elem[i]);
+		p = p->next;
 	}
-	return OK;
 }
 
 
 int main()
 {
-	SqList L;
-	if (InitList(&L))
+	Linklist L;
+	InitList(&L);
+	Elemtype e;
+	
+	int i;
+	if (L)
 	{
-		Elemtype e;
 		printf ("init_success\n");
-		int i;
-		for (i = 0; i < 10; i++)
-		{
-			InsertElem(&L, i+1, i);
-		}
-		printf("length is %d\n", getLength(L));
+	}
+
+	if (isEmpty(L))
+	{
+		printf("list is empth\n");
+	}
+
+	for (i = 0; i < 10; i++)
+	{
+		InsertElem(&L, i+1, i);
+	}
 		
-		if (GetElem(L, 1, &e))
-		{
-			printf("The first element is %d\n", e);
-		}
-		else
-		{
-			printf("element is not exists\n");
-		}
+	if (GetElem(L, 1, &e))
+	{
+		printf("The first element is %d\n", e);
+	}
+	else
+	{
+		printf("element is not exists\n");
+	}
 
-		if (isEmpty(L))
-		{
-			printf("list is empth\n");
-		}
-		else
-		{
-			printf("list is not empth\n");
-		}
+	printf("length is %d/n",getLength(L));
 
-		printf("The element 5 at location %d\n", FindElem(L, 5, *compare));
-		
-		PreElem(L, 6, &e);
-		printf("The 6's previous element is %d\n", e);
+	printf("The element 5 at location %d\n", FindElem(L, 5, *compare));
+	
+	PreElem(L, 6, &e);
+	printf("The 6's previous element is %d\n", e);
 
 
-		NextElem(L, 6, &e);
-		printf("The 6's next element is %d\n", e);
+	NextElem(L, 6, &e);
+	printf("The 6's next element is %d\n", e);
 
-		DeleteElem(&L, 1, &e);
-		printf("delete first element is %d\n", e);
+	DeleteElem(&L, 1, &e);
+	printf("delete first element is %d\n", e);
 	
 
-		printf("list:");
-		TraverseList(L, visit);
-		if (DestoryList(&L))
-		{
-			printf("\ndestory_success\n");
-		}
+	printf("list:");
+	TraverseList(L, visit);
+	if (DestoryList(&L))
+	{
+		printf("\ndestory_success\n");
 	}
 }
 		

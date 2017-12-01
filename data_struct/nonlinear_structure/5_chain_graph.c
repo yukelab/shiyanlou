@@ -163,9 +163,9 @@ Status CreateGraph(ALGraph *G)
 		G->adjList[i].firstEdge = e;
 
 		e = (EdgeLink) malloc(sizeof(EdgeNode));
-		e->adjvex = j;
-		e->next = G->adjList[i].firstEdge;
-		G->adjList[i].firstEdge = e;
+		e->adjvex = i;
+		e->next = G->adjList[j].firstEdge;
+		G->adjList[j].firstEdge = e;
 	}
 	return OK;
 }

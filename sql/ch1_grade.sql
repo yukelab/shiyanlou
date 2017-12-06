@@ -18,9 +18,11 @@ create table course
 create table mark 
 (
 	mid int(4) primary key,
-	contraint sid foreign key (in student) references student(sid),
-	contraint cid foreign key (in class) references class(cid),
-	score int(3)
+    m_sid int(4),
+    m_cid int(4),
+	score int(3),
+    contraint emp_fk1 foreign key (m_sid) references student(sid),
+    contraint emp_fk2 foreign key (m_cid) references course(cid),
 );
 
 insert into student(sid, snamem gender) values(1, 'Tom', 'male');

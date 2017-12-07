@@ -1,0 +1,10 @@
+fluffy 	1995-05-15 	litter 	4 kittens, 3 female, 1 male
+buffy 	1993-06-23 	litter 	5 kittens, 2 female, 3 male
+buffy 	1994-06-19 	litter 	3 pupies, 3 female
+chirpy 	1999-03-21 	vet 	nedded beak straigtened
+slim 	1997-04-03 	vet 	broken rib
+bowser 	1991-10-12 	kennel 	\N	
+fang 	1991-10-12 	kennel 	\N
+fang 	1998-08-28 	birthday 	gave him a new chew toy
+claws 	1994-03-17 	birthday 	gave him a new flea collar
+whistler 	1998-12-09 	birthday 	first birthday

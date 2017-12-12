@@ -23,3 +23,5 @@ delimiter ;
 
 call math_proc();
 
+
+grant select on *.* to 'testuser'@'localhost' identified by '123456';

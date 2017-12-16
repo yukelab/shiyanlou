@@ -4,29 +4,26 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#define FILE_PATH "./test.txt"
 
 int main(int argc, char *argv[])
 {
     int fd;
     char buf[100];
-    if (fd = open(argv[1], O_RDONLY) < 0)
+    if ((fd = open(argv[1], O_RDONLY)) < 0)
     {
-	printf("open error\n");
+	perror("open");
 	exit(-1);
     }
-    else
-    {
-	printf("open success\n");
-    }
-
+//    printf("%d\n", fd);
+//    printf("%s\n" , argv[1]);
     read(fd, buf, 1);
+//    printf("%s\n" , buf);
     write(STDOUT_FILENO, buf, 1);
     lseek(fd, 2, SEEK_CUR);
 
     read(fd, buf, 1);
     write(STDOUT_FILENO, buf, 1);
-    lseek(fd, -1, SEEK_END);
+    lseek(fd, -2, SEEK_END);
     
     read(fd, buf, 1);
     write(STDOUT_FILENO, buf, 1);

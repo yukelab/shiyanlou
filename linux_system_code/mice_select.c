@@ -24,7 +24,7 @@ int main(void)
 	tv.tv_usec = 0;
 
 
-	retval = select(fd+1, &rfds, NULL, NULL, &tv);
+	retval = select(fd+1, &rfds, (fd_set *)0, (fd_set *)0, &tv);
 	if (retval < 0)
 	    printf("error\n");
 
